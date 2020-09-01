@@ -10,7 +10,7 @@ Dr. Fabrício Galende Marques de Carvalho
 
 ## Tema
 
-Sistema web para execução automática de casos de teste para sistemas da área militar.
+Sistema para gerenciamento e execução de casos de teste para a área militar.
 
 ## Objetivo
 
