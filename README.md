@@ -10,12 +10,12 @@ Dr. Fabrício Galende Marques de Carvalho
 
 ## Tema
 
-Sistema para gerenciamento e execução de casos de teste para a área militar.
+Sistema para gerenciamento e execução de casos de teste para sistemas web.
 
 ## Objetivo
 
 Utilizar uma interface web em conjunto com ferramentas tais como
-o selenium webdriver para automatizar diversas categorias de teste para sistemas militares.
+o selenium webdriver para automatizar diversas categorias de teste.
 
 ## Alguns dos testes a serem automatizados são: 
 
