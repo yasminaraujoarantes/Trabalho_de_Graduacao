@@ -6,8 +6,15 @@ plugins {
 
 dependencies {
     providedCompile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'mysql:mysql-connector-java:8.0.21'
+    compile 'jstl:jstl:1.2'
     testCompile 'javax.servlet:javax.servlet-api:3.1.0'
-    
+    implementation 'org.hibernate:hibernate-core:5.3.7.Final'
+    compile group: 'javax.inject', name: 'javax.inject', version: '1'
+    implementation "jakarta.xml.bind:jakarta.xml.bind-api:2.3.2"
+    implementation "org.glassfish.jaxb:jaxb-runtime:2.3.2"
+    compile group: 'javax.ejb', name: 'javax.ejb-api', version: '3.2.2'    
+
     //JUnit 5 framework
     testCompileOnly 'org.junit.jupiter:junit-jupiter-api:5.3.1'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'  
@@ -15,7 +22,7 @@ dependencies {
 
 
 repositories {
-   
+   	mavenCentral()
     jcenter()
 }
 
