@@ -12,10 +12,15 @@ import { HttpClientModule } from '@angular/common/http';
 import {TableModule} from 'primeng/table';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import { DetalheComponent } from './views/detalhe/detalhe.component';
+import { HomeComponent } from './views/home/home.component';
+import {TooltipModule} from 'primeng/tooltip';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    DetalheComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +35,8 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
     HttpClientModule,
     TableModule,
     InputTextareaModule,
-    ProgressSpinnerModule
+    ProgressSpinnerModule,
+    TooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent]
