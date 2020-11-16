@@ -9,7 +9,7 @@
     <center>
         <h1>Cadastro de Usuário</h1>
         <h2>
-            <a href="/trabalho_graduacao/new" class="botao">Novo Usuário</a>
+            <a id="btnNovoUsuario" href="/trabalho_graduacao/new" class="botao">Novo Usuário</a>
              
         </h2>
     </center>
@@ -30,9 +30,9 @@
                     <td><c:out value="${usuario.email}" /></td>
                     <td><c:out value="${usuario.idade}" /></td>
                     <td>
-                        <a href="/trabalho_graduacao/edit?id=<c:out value='${usuario.id}' />">Editar</a>
+                        <a id="btnEditar${usuario.id}" href="/trabalho_graduacao/edit?id=<c:out value='${usuario.id}' />">Editar</a>
                         &nbsp;&nbsp;&nbsp;&nbsp;
-                        <a href="/trabalho_graduacao/delete?id=<c:out value='${usuario.id}' />">Deletar</a>                     
+                        <a id="btnExcluir${usuario.id}" href="/trabalho_graduacao/delete?id=<c:out value='${usuario.id}' />" onclick="excluidoComSucesso();">Deletar</a>                     
                     </td>
                 </tr>
             </c:forEach>
@@ -81,5 +81,15 @@
 		color: white;
 	}
 </style>
+
+<script type="text/javascript">
+	//<![CDATA[
+
+	function excluidoComSucesso() {
+		alert('Usuário excluído com sucesso!');
+	}
+
+	//]]>
+</script>
 
 </html>

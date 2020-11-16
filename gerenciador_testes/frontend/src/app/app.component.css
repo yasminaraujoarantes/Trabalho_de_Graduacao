@@ -1,0 +1,19 @@
+.inputTable {
+    margin-bottom: 30px !important;
+    margin-top: 20px !important;
+    width: 100%;
+}
+
+.inputTextArea {
+    margin-bottom: 20px !important;
+}
+
+.divCasoDeTeste {
+    display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.btnTable {
+    margin: 5px;
+}

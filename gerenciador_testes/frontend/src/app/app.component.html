@@ -1,0 +1,138 @@
+<p-panel header="Teste" class="ui-g-12">
+
+  <div class="ui-g ui-fluid" style="padding: 2% 5% 0% 5%;">
+
+    <!-- Dropdown para selecionar ação -->
+    <div class="ui-g-12 ui-md-12">
+      <div class="ui-inputgroup">
+        <p-dropdown id="dropdown-input" [options]="acoes" [(ngModel)]="acaoSelecionada" placeholder="Selecione uma ação"
+          optionLabel="name" [showClear]="true" (onChange)="selecionarAcao($event.value)"></p-dropdown>
+      </div>
+    </div>
+
+    <!-- Campo de texto para inserir -->
+    <div class="ui-g-12 ui-md-12" *ngIf="acaoSelecionada?.value === 'preencher_input'">
+      <span class="ui-float-label">
+        <input id="float-input" type="text" size="30" pInputText [(ngModel)]="testeSelecionado.textInput">
+        <label for="float-input">Texto para inserir</label>
+      </span>
+    </div>
+
+    <!-- Campo de sída esperada -->
+    <div class="ui-g-12 ui-md-12" *ngIf="acaoSelecionada?.value === 'comparar_textos' || acaoSelecionada?.value === 'comparar_texto_alerta'">
+      <span class="ui-float-label">
+        <input id="float-input" type="text" size="30" pInputText [(ngModel)]="testeSelecionado.saidaEsperada">
+        <label for="float-input">Saída esperada</label>
+      </span>
+    </div>
+
+    <!-- Campo para selecionar o tipo do By -->
+    <div class="ui-g-12 ui-md-12" *ngIf="acaoSelecionada && acaoSelecionada?.value !== 'abrir_pagina' && acaoSelecionada?.value !== 'comparar_texto_alerta' && acaoSelecionada?.value !== 'aceitar_alerta' && acaoSelecionada?.value !== 'negar_alerta'">
+      <div class="ui-inputgroup">
+        <p-dropdown id="dropdown-input" [options]="tiposBy" [(ngModel)]="tipoBySelecionado"
+          placeholder="Selecione como encontrar o elemento" optionLabel="name" [showClear]="true"
+          (onChange)="selecionarTiposBy($event.value)"></p-dropdown>
+      </div>
+    </div>
+
+    <!-- Campo para inserir o elemento -->
+    <div class="ui-g-12 ui-md-12" *ngIf="tipoBySelecionado">
+      <span class="ui-float-label">
+        <input id="float-input" type="text" size="30" pInputText [(ngModel)]="testeSelecionado.element">
+        <label for="float-input">Elemento</label>
+      </span>
+    </div>
+
+    <!-- Campo para url -->
+    <div class="ui-g-12 ui-md-12" *ngIf="acaoSelecionada?.value === 'abrir_pagina'">
+      <span class="ui-float-label">
+        <input id="float-input" type="text" size="30" pInputText [(ngModel)]="testeSelecionado.url">
+        <label for="float-input">URL</label>
+      </span>
+    </div>
+
+    <!-- Botões para salvar/adicionar o teste ao caso de testes -->
+    <div class="ui-g-12 ui-md-12">
+      <p-button label="Adicionar" (onClick)="adicionarTeste()" *ngIf="!testeSelecionado?.id"></p-button>
+      <p-button label="Salvar" (onClick)="salvarTeste()" *ngIf="testeSelecionado.id"></p-button>
+    </div>
+
+  </div>
+
+</p-panel>
+
+<p-panel class="ui-g-12 divCasoDeTeste">
+
+  <p-header>
+    <div class="ui-helper-clearfix">
+      <span class="ui-panel-title" style="display:inline-block;margin-top:2px">Caso de testes</span>
+      <button pButton type="button" label="Executar" class="ui-button-warning" (click)="executarTestes()"
+        style="float:right; font-weight: bold;"></button>
+    </div>
+  </p-header>
+
+  <div class="ui-g">
+    <div class="ui-g-8">
+
+      <!-- Campo de nome do caso de teste -->
+      <div class="ui-g-12 ui-md-12" class="inputTable">
+        <span class="ui-float-label">
+          <input id="float-inputt" type="text" pInputText [(ngModel)]="casoDeTesteSelecionado.nome" style="width: 100%;">
+          <label for="float-inputt">Nome</label>
+        </span>
+      </div>
+  
+      <!-- Campo de objetivo do caso de teste -->
+      <div class="ui-g-12 ui-md-12" class="inputTable">
+        <span class="ui-float-label">
+          <textarea id="float-inputtt" rows="7" pInputTextarea [(ngModel)]="casoDeTesteSelecionado.objetivo"
+            class="inputTextArea" style="width: 100%;"></textarea>
+          <label for="float-inputtt">Objetivo</label>
+        </span>
+      </div>
+    </div>
+
+    <!-- Informações de resultado dos teste (Sucesso ou Erro) -->
+    <div class="ui-g-4" style="text-align: center;" >
+      <p-progressSpinner *ngIf="mostrarSpinner"></p-progressSpinner>
+      <h1 *ngIf="!mostrarSpinner">{{mensagemRetorno ? mensagemRetorno.tipo : "-"}}</h1>
+      <h4 *ngIf="!mostrarSpinner">{{mensagemRetorno ? mensagemRetorno.titulo : "-"}}</h4>
+      <div style="background-color: rgb(187, 187, 187); width: 100%; height: 80px;" *ngIf="!mensagemRetorno || mostrarSpinner"> </div>
+      <div style="background-color: rgb(0, 255, 85); width: 100%; height: 80px;" *ngIf="mensagemRetorno?.tipo === 'Sucesso' && !mostrarSpinner"> </div>
+      <div style="background-color: crimson; width: 100%; height: 80px;" *ngIf="mensagemRetorno?.tipo === 'Erro' && !mostrarSpinner"> </div>
+    </div>
+  </div>
+
+  <!-- Tabela de testes -->
+  <p-table id="dataTableTestes" [value]="casoDeTesteSelecionado.testes">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th>Ação</th>
+        <th>Descrição</th>
+        <th>Editar/Excluir</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-teste>
+      <tr>
+        <td>{{teste.id}}</td>
+        <td>{{teste.action}}</td>
+        <td>
+          <p *ngIf="teste.byType"><b>By:</b> {{teste.byType}}</p>
+          <p *ngIf="teste.element"><b>Elemento:</b> {{teste.element}}</p>
+          <p *ngIf="teste.url"><b>URL:</b> {{teste.url}}</p>
+          <p *ngIf="teste.textInput"><b>Texto para inserir:</b> {{teste.textInput}}</p>
+          <p *ngIf="teste.saidaEsperada"><b>Saída esperada:</b> {{teste.saidaEsperada}}</p>
+        </td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" (click)="prepararEdicaoTeste(teste)"></button>
+          <button pButton type="button" icon="pi pi-trash" class="ui-button-danger btnTable"
+            (click)="excluirTeste(teste)"></button>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+</p-panel>
+
+<router-outlet></router-outlet>
