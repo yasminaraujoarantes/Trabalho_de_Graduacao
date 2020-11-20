@@ -1,24 +1,52 @@
-package com.tg.gerenciador_testes.dto;
+package com.tg.gerenciador_testes.model;
 
-public class TesteDTO {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+@Entity
+@Table(name="teste")
+public class Teste {
 	
+	@Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+	@Column(name="id")
 	private Long id;
 	
+	@Column(name="action")
 	private String action;
 	
+	@Column(name="by_type")
 	private String byType;
 	
+	@Column(name="element")
 	private String element;
 	
+	@Column(name="url")
 	private String url;
 	
+	@Column(name="text_input")
 	private String textInput;
 	
+	@Column(name="saida_esperada")
 	private String saidaEsperada;
 	
-	public TesteDTO() {}
+	@ManyToOne(fetch= FetchType.LAZY)
+	@JoinColumn(name="id_caso_teste")
+	@JsonManagedReference
+	private CasoDeTeste casoDeteste;
 	
-	public TesteDTO(Long id, String action, String byType, String element, String url, String textInput, String saidaEsperada) {
+	public Teste() {}
+	
+	public Teste(Long id, String action, String byType, String element, String url, String textInput, String saidaEsperada, CasoDeTeste casoDeteste) {
 		super();
 		this.id = id;
 		this.action = action;
@@ -27,6 +55,7 @@ public class TesteDTO {
 		this.url = url;
 		this.textInput = textInput;
 		this.saidaEsperada = saidaEsperada;
+		this.casoDeteste = casoDeteste;
 	}
 
 	public Long getId() {
@@ -83,6 +112,14 @@ public class TesteDTO {
 
 	public void setSaidaEsperada(String saidaEsperada) {
 		this.saidaEsperada = saidaEsperada;
+	}
+
+	public CasoDeTeste getCasoDeteste() {
+		return casoDeteste;
+	}
+
+	public void setCasoDeteste(CasoDeTeste casoDeteste) {
+		this.casoDeteste = casoDeteste;
 	}
 	
 }

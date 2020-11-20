@@ -35,4 +35,11 @@ export class HomeComponent implements OnInit {
     });
   }
 
+public clonarCasoDeTeste(id: number) {
+    this.service.clonarCasoDeTeste(id).subscribe(response => {
+      window.location.reload();
+    }, error => {
+      console.log(error);
+    });
+  }
 }

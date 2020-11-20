@@ -57,4 +57,12 @@ export class TestadorService {
     public executarTestes(casoDeTeste: CasoDeTeste) {
         return this.http.post(`${this.apiUrl}/executar_testes`, casoDeTeste).pipe();
     }
+
+public clonarCasoDeTeste(idCasoDeTeste: number) {
+        return this.http.post(`${this.apiUrl}/clonar/${idCasoDeTeste}`, {}).pipe(
+            catchError(e => {
+                return throwError(e);
+            })
+        );
+    }
 }

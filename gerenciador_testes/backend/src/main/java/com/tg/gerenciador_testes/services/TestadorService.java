@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.tomcat.util.http.fileupload.IOUtils;
@@ -13,26 +16,150 @@ import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import com.tg.gerenciador_testes.dto.CasoDeTesteDTO;
 import com.tg.gerenciador_testes.dto.MensagemDTO;
 import com.tg.gerenciador_testes.dto.TesteDTO;
+import com.tg.gerenciador_testes.model.CasoDeTeste;
+import com.tg.gerenciador_testes.model.Teste;
+import com.tg.gerenciador_testes.repositories.CasoDeTesteRepository;
+import com.tg.gerenciador_testes.repositories.TesteRepository;
 
 @Service
 public class TestadorService {
 	
 	private WebDriver driver;
 	
+	@Autowired
+	private CasoDeTesteRepository repository;
+	
+	@Autowired
+	private TesteRepository testeRepository;
+	
 	public void teste() {
 		setUpChromeDriver();
-		driver = new ChromeDriver();
-		driver.manage().window().maximize();
-		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
-		
 		driver.get("https://google.com.br");
 	}
+	
+	public void deletarCasoDeTestePorId(Long idCasoDeTeste) {
+		repository.deleteById(idCasoDeTeste);
+	}
+	
+	public List<CasoDeTesteDTO> buscarTodosCasosDeTeste() {
+		return repository.buscarTodosCasosDeTeste();
+	}
+	
+	public CasoDeTesteDTO detalharCasoDeTeste(Long idCasoDeTeste) throws Exception {
+		CasoDeTeste casoDeTeste = buscarCasoDeTestePorId(idCasoDeTeste);
+		
+		CasoDeTesteDTO casoDeTesteDTO = new CasoDeTesteDTO();
+		casoDeTesteDTO.setId(casoDeTeste.getId());
+		casoDeTesteDTO.setNome(casoDeTeste.getNome());
+		casoDeTesteDTO.setObjetivo(casoDeTeste.getObjetivo());
+		
+		List<TesteDTO> testes = new ArrayList<>();
+		
+		for (Teste teste : casoDeTeste.getTestes()) {
+			TesteDTO testeDTO = new TesteDTO();
+			testeDTO.setId(teste.getId());
+			testeDTO.setAction(teste.getAction());
+			testeDTO.setByType(teste.getByType());
+			testeDTO.setElement(teste.getElement());
+			testeDTO.setUrl(teste.getUrl());
+			testeDTO.setTextInput(teste.getTextInput());
+			testeDTO.setSaidaEsperada(teste.getSaidaEsperada());
+			
+			testes.add(testeDTO);
+		}
+		
+		casoDeTesteDTO.setTestes(testes);
+		
+		return casoDeTesteDTO;
+	}
+	
+	public CasoDeTeste buscarCasoDeTestePorId(Long idCasoDeTeste) throws Exception {
+		Optional<CasoDeTeste> obj = repository.findById(idCasoDeTeste);
+		return obj.orElseThrow(() -> new Exception("Não encontrado!"));
+	}
+	
+	public Teste buscarTestePorId(Long idTeste) throws Exception {
+		Optional<Teste> obj = testeRepository.findById(idTeste);
+		return obj.orElseThrow(() -> new Exception("Não encontrado!"));
+	}
+	
+	public CasoDeTeste inserir(CasoDeTesteDTO casoDeTesteDTO) {
+		CasoDeTeste casoDeTesteParaInserir = new CasoDeTeste();
+		
+		casoDeTesteParaInserir.setNome(casoDeTesteDTO.getNome());
+		casoDeTesteParaInserir.setObjetivo(casoDeTesteDTO.getObjetivo());
+		casoDeTesteParaInserir.setTestes(new ArrayList<>());
+		
+		for (TesteDTO testeDTO : casoDeTesteDTO.getTestes()) {
+			Teste testeParaInserir = new Teste();
+			testeParaInserir.setAction(testeDTO.getAction());
+			testeParaInserir.setByType(testeDTO.getByType());
+			testeParaInserir.setElement(testeDTO.getElement());
+			testeParaInserir.setUrl(testeDTO.getUrl());
+			testeParaInserir.setTextInput(testeDTO.getTextInput());
+			testeParaInserir.setSaidaEsperada(testeDTO.getSaidaEsperada());
+			testeParaInserir.setCasoDeteste(casoDeTesteParaInserir);
+			
+			casoDeTesteParaInserir.getTestes().add(testeParaInserir);
+		}
+		
+		return repository.save(casoDeTesteParaInserir);
+	}
+	
+	public CasoDeTeste editar(CasoDeTesteDTO casoDeTesteDTO) throws Exception {
+		CasoDeTeste casoDeTeste = buscarCasoDeTestePorId(casoDeTesteDTO.getId());
+		
+		casoDeTeste.setNome(casoDeTesteDTO.getNome());
+		casoDeTeste.setObjetivo(casoDeTesteDTO.getObjetivo());
+		List<Teste> testes = new ArrayList<>();
+		
+		for (TesteDTO testeDTO : casoDeTesteDTO.getTestes()) {
+			
+			Teste testeParaInserir = new Teste();
+			if (testeDTO.getId() != null) {
+				testeParaInserir = buscarTestePorId(testeDTO.getId());
+			}
+			
+			testeParaInserir.setAction(testeDTO.getAction());
+			testeParaInserir.setByType(testeDTO.getByType());
+			testeParaInserir.setElement(testeDTO.getElement());
+			testeParaInserir.setUrl(testeDTO.getUrl());
+			testeParaInserir.setTextInput(testeDTO.getTextInput());
+			testeParaInserir.setSaidaEsperada(testeDTO.getSaidaEsperada());
+			testeParaInserir.setCasoDeteste(casoDeTeste);
+			
+			testes.add(testeParaInserir);
+		}
+		
+		casoDeTeste.setTestes(testes);
+		
+		return repository.save(casoDeTeste);
+	}
+
+	public CasoDeTeste clonar(Long idCasoDeTeste) throws Exception {
+       	 	CasoDeTeste casoDeTesteOriginal = buscarCasoDeTestePorId(idCasoDeTeste);
+        	CasoDeTeste novoCasoDeTeste = new CasoDeTeste(null, casoDeTesteOriginal.getNome()+"(1)", casoDeTesteOriginal.getObjetivo(), null);
+
+       		 List<Teste> testesClonados = new ArrayList<>();
+        	for (Teste testeOriginal : casoDeTesteOriginal.getTestes()) {
+         	    Teste testeNovo = new Teste(
+                    null, testeOriginal.getAction(), testeOriginal.getByType(), 
+                    testeOriginal.getElement(), testeOriginal.getUrl(), testeOriginal.getTextInput(), 
+                    testeOriginal.getSaidaEsperada(), novoCasoDeTeste);
+                    testesClonados.add(testeNovo);
+        }
+
+               novoCasoDeTeste.setTestes(testesClonados);
+               repository.save(novoCasoDeTeste);
+               return novoCasoDeTeste;
+       }
 	
 	/**Método usado para configurar o driver do Google Chrome**/
 	private void setUpChromeDriver() {
@@ -58,9 +185,6 @@ public class TestadorService {
 	/**Método que passa por todos os testes do caso de teste recebido pela api e executa**/
 	public MensagemDTO executarTestes(CasoDeTesteDTO casoDeTeste) throws IOException {
 		setUpChromeDriver();
-//		driver = new ChromeDriver();
-//		driver.manage().window().maximize();
-//		driver.manage().timeouts().implicitlyWait(50, TimeUnit.SECONDS);
 
 		Long idTesteAtual = null;
 		
@@ -143,7 +267,7 @@ public class TestadorService {
 
 		return element;
 	}
-	
+		
 	/** Métodos referentes as ações do Selenium**/
 	
 	private void abrirPagina(TesteDTO teste) {

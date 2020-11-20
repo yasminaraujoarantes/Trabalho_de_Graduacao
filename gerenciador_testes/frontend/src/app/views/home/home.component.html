@@ -10,7 +10,7 @@
                 <th>ID</th>
                 <th>Nome</th>
                 <th>Objetivo</th>
-                <th>Ações</th>
+                <th colspan="2">Ações </th>
             </tr>
         </ng-template>
         <ng-template pTemplate="body" let-item>
@@ -18,8 +18,9 @@
                 <td>{{item.id}}</td>
                 <td>{{item.nome}}</td>
                 <td>{{item.objetivo}}</td>
-                <td style="text-align: center;">
+                <td style="text-align: center;" colspan="2">
                     <button pButton type="button" icon="pi pi-search" iconPos="left" label="Visualizar" [routerLink]="['/visualizar', item.id]"></button>
+		            <button pButton type="button" icon="pi pi-copy" iconPos="left" label="Clonar"class="ui-button-warning" style="margin-left: 10px;" (click)="clonarCasoDeTeste(item.id)"></button>
                     <button pButton type="button" icon="pi pi-trash" iconPos="left" label="Excluir" class="ui-button-danger" style="margin-left: 10px;" (click)="deletarCasoDeTeste(item.id)"></button>
                 </td>
             </tr>
