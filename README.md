@@ -26,4 +26,6 @@ Teste de confiabilidade.
 
 ## Vídeo com a aplicação completa rodando 
 
-https://www.youtube.com/watch?v=g7rzTKZ7Pi0&feature=youtu.be
+https://youtu.be/-Ak1ymYHoZg - 1º parte 
+
+https://youtu.be/7gGgPQFcUlQ - 2º parte
